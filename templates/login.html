@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fc"><meta name="description" content="Sign in to your AuraEd student performance forecast.">
+  <title>Sign in · AuraEd</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="{{ url_for('login') }}" aria-label="AuraEd home"><span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5 18.8 13l9.7 3-9.7 2.9L16 28.5 13.2 19 3.5 16l9.7-3L16 3.5Z" fill="currentColor"/><circle cx="16" cy="16" r="2.2" fill="#fff"/></svg></span><span>AuraEd<span class="brand-dot">.</span></span></a>
+      <div class="side-label">YOUR WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation"><a class="nav-item active" href="{{ url_for('login') }}"><span class="nav-icon">◫</span> Performance forecast <span class="nav-chevron">›</span></a></nav>
+      <div class="side-bottom"><div class="side-help-icon">?</div><div><strong>Here to help</strong><span>Make sense of your progress</span></div><span class="side-arrow">↗</span></div>
+    </aside>
+    <main class="main-area">
+      <header class="topbar"><div class="breadcrumb">Workspace <span>/</span> <strong>Sign in</strong></div><div class="topbar-right"><span class="private-label"><span class="lock-icon">⌑</span> Private by design</span><div class="avatar">A</div></div></header>
+      <div class="content-wrap login-content">
+        <section class="intro"><div class="eyebrow"><span class="sparkle">✳</span> YOUR NEXT CHAPTER STARTS HERE</div><h1>Welcome <span>back.</span></h1><p>Sign in to continue to your personal performance forecast.</p></section>
+        <section class="login-layout">
+          <div class="form-card login-card">
+            <div class="card-head"><div><div class="step-kicker">YOUR ACCOUNT <span>01 / 01</span></div><h2>Sign in to AuraEd</h2><p>Use the email and password linked to your account.</p></div><div class="card-icon">✦</div></div>
+            {% if error %}<div class="alert" role="alert"><span>!</span><div><strong>We couldn’t sign you in</strong><p>{{ error }}</p></div></div>{% endif %}
+            {% if not configured and not error %}<div class="alert compact" role="status"><span>i</span><div><strong>One quick setup step</strong><p>Add your Supabase project URL and anon key to <code>.env</code>.</p></div></div>{% endif %}
+            <form action="{{ url_for('login') }}" method="post">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <div class="field"><label for="email">Email address</label><div class="input-wrap"><span class="input-icon" aria-hidden="true">✉</span><input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="username" inputmode="email" required></div></div>
+              <div class="field"><label for="password">Password</label><div class="input-wrap"><span class="input-icon" aria-hidden="true">⌑</span><input id="password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required></div></div>
+              <button class="submit-button" type="submit" {% if not configured %}disabled{% endif %}><span>Sign in</span><span class="button-arrow">→</span></button>
+              <div class="form-foot"><span class="shield">⬡</span> Your sign-in is secured by Supabase</div>
+            </form>
+          </div>
+          <aside class="insight-card login-insight"><div class="insight-top"><span class="insight-icon">✳</span><span class="tag">A NOTE FOR YOU</span></div><h3>Progress starts with showing up.</h3><p>Your forecast is a starting point, not a verdict. The choices you make next still matter most.</p><div class="login-quote"><span>“</span><div><strong>Consistency beats intensity.</strong><small>One focused hour at a time.</small></div></div></aside>
+        </section>
+        <footer class="page-footer"><a class="footer-brand" href="{{ url_for('login') }}">AuraEd<span>.</span></a><span>© 2026 Student Academic Performance Prediction System. All rights reserved.</span></footer>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

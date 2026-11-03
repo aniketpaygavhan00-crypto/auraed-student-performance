@@ -1,0 +1,18 @@
+.login-content{max-width:980px;padding-top:68px}
+.login-layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(250px,.8fr);gap:18px;align-items:stretch}
+.login-card{padding:27px 28px 22px}
+.login-card .field{margin-bottom:19px}
+.login-insight{min-height:345px}
+.login-insight h3{max-width:260px}
+.login-quote{display:flex;align-items:center;gap:10px;margin-top:auto;padding-top:18px;border-top:1px solid #e8e5f7}
+.login-quote>span{font:36px Georgia;color:#a19aed;line-height:1}
+.login-quote strong,.login-quote small{display:block}
+.login-quote strong{font-size:11px;color:#535676}
+.login-quote small{font-size:10px;color:#9699b0;margin-top:4px}
+.login-content .page-footer{margin-top:42px}
+.account-email{max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:#7e8599}
+.logout-form{margin:0}
+.logout-button{border:1px solid #e5e7ef;border-radius:6px;padding:7px 10px;background:#fff;color:#5a6077;font:600 10px var(--font);cursor:pointer}
+.logout-button:hover{border-color:#b9b4e9;color:#5146c6}
+@media(max-width:900px){.login-content{padding-left:30px;padding-right:30px}.account-email{display:none}}
+@media(max-width:640px){.login-content{padding:38px 19px 22px}.login-layout{grid-template-columns:1fr}.login-insight{min-height:260px}.login-card{padding:23px 20px}.topbar{padding:0 20px}.topbar-right{gap:10px}.private-label{display:none}.login-content .page-footer{align-items:flex-start;gap:12px;flex-direction:column}}
