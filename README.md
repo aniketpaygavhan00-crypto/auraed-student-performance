@@ -13,14 +13,12 @@ The estimate uses a small model fitted to synthetic demonstration data. It is no
 
 ## GitHub Pages
 
-The GitHub Actions workflow deploys only the static website files from the repository. To enable it:
+This is a static website; GitHub Pages serves it directly from the repository without Flask, Render, or a build workflow.
 
 1. Open the repository on GitHub and go to **Settings → Pages**.
-2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-3. In **Settings → Actions → General → Workflow permissions**, allow workflows to deploy GitHub Pages if prompted.
-4. Open the **Actions** tab and allow workflows if GitHub prompts you.
-5. Push to `main` or run **Deploy GitHub Pages** from **Actions → Deploy GitHub Pages → Run workflow**.
-6. Wait for the workflow to finish, then use the site link shown under **Settings → Pages**. A first deployment may take a few minutes.
+2. Under **Build and deployment**, choose **Deploy from a branch**.
+3. Set the branch to **`main`** and the folder to **`/ (root)`**, then click **Save**.
+4. Wait for the Pages deployment to finish, then open the site link shown under **Settings → Pages**. It will be `https://aniketpaygavhan00-crypto.github.io/auraed-student-performance/`.
 
 To attach a custom domain later, add it under **Settings → Pages → Custom domain**, configure the DNS records GitHub shows, and enable **Enforce HTTPS** after DNS verification.
 
