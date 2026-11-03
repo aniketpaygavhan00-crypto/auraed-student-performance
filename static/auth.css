@@ -1,3 +1,4 @@
+[hidden]{display:none!important}
 .login-content{max-width:980px;padding-top:68px}
 .login-layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(250px,.8fr);gap:18px;align-items:stretch}
 .login-card{padding:27px 28px 22px}
@@ -13,6 +14,10 @@
 .account-email{max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:#7e8599}
 .logout-form{margin:0}
 .logout-button{border:1px solid #e5e7ef;border-radius:6px;padding:7px 10px;background:#fff;color:#5a6077;font:600 10px var(--font);cursor:pointer}
+.logout-button:disabled{opacity:.55;cursor:wait}
+.auth-loading{padding:48px;color:#7e8599;font-size:13px}
+.back-link{border:0;background:transparent;font:inherit;cursor:pointer}
+.logout-button:focus-visible,.back-link:focus-visible{outline:3px solid rgba(112,99,220,.45);outline-offset:3px}
 .logout-button:hover{border-color:#b9b4e9;color:#5146c6}
 @media(max-width:900px){.login-content{padding-left:30px;padding-right:30px}.account-email{display:none}}
 @media(max-width:640px){.login-content{padding:38px 19px 22px}.login-layout{grid-template-columns:1fr}.login-insight{min-height:260px}.login-card{padding:23px 20px}.topbar{padding:0 20px}.topbar-right{gap:10px}.private-label{display:none}.login-content .page-footer{align-items:flex-start;gap:12px;flex-direction:column}}

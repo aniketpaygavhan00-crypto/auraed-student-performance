@@ -1,80 +1,38 @@
-# Northstar · Student Performance Forecast
+# AuraEd · Student Performance Forecast
 
-A responsive Flask demo that estimates a student's final score from enrollment number, daily study hours, attendance, and a previous score. The interface is based on the supplied screenshots and includes a shareable WhatsApp result.
+A static, responsive student performance forecast hosted on GitHub Pages. Supabase provides email/password authentication and stores each student's submissions under their account.
 
-> **Sample model only:** `data/sample_student_data.csv` is synthetic demonstration data. The trained model is not validated for real academic decisions. Replace the CSV with appropriate, consented historical data and evaluate it before real use.
+The estimate uses a small model fitted to synthetic demonstration data. It is not validated for real academic decisions and is not a measure of a student's potential.
 
-## Run locally
+## Supabase setup
 
-Python 3.10 or newer is recommended.
+1. In Supabase, open **SQL Editor → New query**, paste [`supabase/schema.sql`](./supabase/schema.sql), and run it. This creates `public.student_predictions` and row-level security policies that associate submissions with their authenticated user.
+2. In **Authentication → Sign In / Providers**, enable **Email**, then create a test student under **Authentication → Users**.
+3. Open **Authentication → URL Configuration**. Set **Site URL** to `https://aniketpaygavhan00-crypto.github.io/auraed-student-performance/` and add the same URL under **Redirect URLs**. The current sign-in uses email and password without an OAuth redirect; this also prepares for Supabase auth emails.
+4. The project URL and publishable key are configured in [`js/supabase-config.js`](./js/supabase-config.js). The publishable key is intended to be public; never put a `service_role` or secret key in this file or any browser code. Database access is controlled by the SQL row-level security policies.
 
-```bash
-python -m venv .venv
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-# macOS / Linux: source .venv/bin/activate
-python -m pip install -r requirements.txt
-python train.py
-python app.py
-```
+## GitHub Pages
 
-Open <http://127.0.0.1:7860>. `train.py` creates `model/student_model.joblib` from the CSV. The model file is generated locally and is not required in source control.
+The GitHub Actions workflow deploys only the static website files from the repository. To enable it:
 
-## Supabase sign-in
+1. Open the repository on GitHub and go to **Settings → Pages**.
+2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+3. In **Settings → Actions → General → Workflow permissions**, allow workflows to deploy GitHub Pages if prompted.
+4. Open the **Actions** tab and allow workflows if GitHub prompts you.
+5. Push to `main` or run **Deploy GitHub Pages** from **Actions → Deploy GitHub Pages → Run workflow**.
+6. Wait for the workflow to finish, then use the site link shown under **Settings → Pages**. A first deployment may take a few minutes.
 
-The app opens on the login screen when there is no valid session. A successful sign-in leads to the forecast form. Each valid submission is saved in `public.student_predictions` and linked to the signed-in Supabase Auth user. Follow these steps to configure it:
+To attach a custom domain later, add it under **Settings → Pages → Custom domain**, configure the DNS records GitHub shows, and enable **Enforce HTTPS** after DNS verification.
 
-1. Open your project in the Supabase Dashboard.
-2. Open **SQL Editor**, create a new query, paste the contents of [`supabase/schema.sql`](./supabase/schema.sql), and run it. This creates the table, constraints, index, and Row Level Security policies. The policies allow signed-in users to insert and read only their own rows.
-3. In **Authentication → Sign In / Providers**, enable **Email**. Create a test student under **Authentication → Users** (or enable sign-up separately if you later add a registration page).
-4. Open **Project Settings → API** (or **API Keys**) and copy the **Project URL** and a client-safe **publishable key** (`sb_publishable_...`) or legacy **anon/public key**. Do not use the `service_role` or secret key.
-5. In the project folder, copy `.env.example` to `.env` and set:
-   - `SUPABASE_URL` to the Project URL.
-   - `SUPABASE_ANON_KEY` to the publishable or legacy anon/public key.
-   - `FLASK_SECRET_KEY` to a long, random secret that stays unchanged across restarts.
-   - Set `AUTH_COOKIE_SECURE=true` when serving over HTTPS. Keep it `false` for local HTTP development.
-6. Install dependencies, generate the demo model, then start the app:
+## Student data and estimate
 
-   ```bash
-   python -m pip install -r requirements.txt
-   python train.py
-   python app.py
-   ```
+After sign-in, a student submits enrollment number, study hours per day, their latest assessment percentage, and attendance. The app computes the sample forecast in the browser, then sends the inputs, the estimated percentage, and the authenticated student's user ID to Supabase. Row-level security checks that the `user_id` matches the signed-in user. The browser never uses a privileged key.
 
-7. Open <http://127.0.0.1:7860>. Sign in with the test account and submit the student form. In Supabase, open **Table Editor → student_predictions** to confirm the row and its `user_id`. Supabase access and refresh tokens are stored in HttpOnly cookies; expired access tokens are refreshed automatically.
+The model runs in browser code because GitHub Pages serves static files and does not run Flask or Python. The embedded model values reproduce the current synthetic demo model; retraining it requires updating the model implementation in `js/forecast.mjs`.
 
-The form's **Percentage** is the student's latest assessment percentage (the model's existing previous-score input). The table also saves the model's `predicted_percentage`. The Flask server sends the signed-in user's access token with each insert, and the database checks `auth.uid() = user_id`; the browser never chooses the `user_id`.
+## Security
 
-The only Supabase values needed are the **Project URL** and a **publishable/anon public key**. Never send or put a service-role/secret key in `.env`, source code, or the browser. The app does not need it.
-
-## Replace the sample data
-
-Edit `data/sample_student_data.csv`, keeping these numeric columns and units:
-
-| Column | Meaning | Range |
-| --- | --- | --- |
-| `study_hours` | Average daily study hours | 0–24 |
-| `attendance` | Attendance percentage | 0–100 |
-| `previous_score` | Most recent assessment score | 0–100 |
-| `final_score` | Observed final score to learn | 0–100 |
-
-Keep at least eight complete rows. Then run `python train.py` again. Use representative, lawfully collected data and assess fairness and predictive quality before relying on predictions.
-
-## Deploy on Render
-
-This project includes a Render Blueprint in `render.yaml`. Push the repository to GitHub, then in Render choose **New → Blueprint**, select the repository, and apply the Blueprint. Render generates `FLASK_SECRET_KEY` and asks you to provide `SUPABASE_URL` and `SUPABASE_ANON_KEY` as private environment values during setup. Use your Project URL and publishable/anon key; never enter a service-role or secret key. The deployed service enables secure cookies and uses the included Dockerfile, which trains from the synthetic demo CSV during image build.
-
-## Project structure
-
-```text
-app.py                 Flask routes and score prediction
-train.py               Reproducible scikit-learn training script
-data/sample_student_data.csv
-templates/             Sign-in, predictor, and result pages
-static/                Interface styles
-supabase/schema.sql    Student submissions table and RLS policies
-render.yaml            Render deployment Blueprint
-.env.example           Supabase and Flask configuration placeholders
-requirements.txt
-Dockerfile
-Procfile
-```
+- Never put a Supabase `service_role` key, database password, or other secret in this repository or frontend JavaScript.
+- If a service-role key has been shared or exposed, rotate it in Supabase immediately.
+- Only use the project publishable (or legacy anon/public) key in the static site. Keep Row Level Security enabled.
+- Enrollment numbers and student data are personal information. Only collect data with the appropriate authorization and consent.
